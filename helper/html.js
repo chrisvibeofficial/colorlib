@@ -1,4 +1,4 @@
-exports.verify = (link, firstName) => {
+exports.verify = (link, userName) => {
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -71,7 +71,7 @@ exports.verify = (link, firstName) => {
                     <h1>Account Verification</h1>
                 </div>
                 <div class="content">
-                    <p>Hello ${firstName},</p>
+                    <p>Hello ${userName},</p>
                     <p>Thank you for signing up to our platform. We are excited to have you on board.</p>
                     <p>Please click the button below to verify your account:</p>
                     <div class="button-container">
@@ -92,7 +92,7 @@ exports.verify = (link, firstName) => {
 };
 
 
-exports.reset = (link, firstName) => {
+exports.reset = (link, userName) => {
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -165,7 +165,7 @@ exports.reset = (link, firstName) => {
                     <h1>Password Reset</h1>
                 </div>
                 <div class="content">
-                    <p>Hello ${firstName},</p>
+                    <p>Hello ${userName},</p>
                     <p>Here is a link to reset your password.</p>
                     <p>Please click the button below to reset your password:</p>
                     <div class="button-container">
