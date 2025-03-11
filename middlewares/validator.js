@@ -2,7 +2,7 @@ const joi = require('joi');
 
 exports.validateRegister = (req, res, next) => {
   const schema = joi.object({
-    userName: joi.string().trim().min(3).max.pattern(/^[A-Za-z]+$/).required(),
+    userName: joi.string().trim().min(3).pattern(/^[A-Za-z]+$/).required(),
     email: joi.string().trim().email().required(),
     password: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required(),
     confirmPassword: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required()
