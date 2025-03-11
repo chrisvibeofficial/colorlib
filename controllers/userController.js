@@ -14,11 +14,19 @@ exports.register = async (req, res) => {
       })
     };
 
-    const user = await userModel.find({ email: email.toLowerase() } && { userName: userName.toLowerase() });
+    const existingEmail = await userModel.find({ email: email.toLowerase() });
 
-    if (user.length === 1) {
+    if (existingEmail.length === 1) {
       return res.status(400).json({
-        message: 'Account already exist'
+        message: `Account with email: ${email} already exist`
+      })
+    };
+
+    const existingusername = await userModel.find({ userName: userName });
+
+    if (existingusername.length === 1) {
+      return res.status(400).json({
+        message: `Account with username: ${userName} already exist`
       })
     };
 
