@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
       })
     };
 
-    const existingEmail = await userModel.find({ email: email.toLowerase() });
+    const existingEmail = await userModel.find({ email: email.toLowerCase() });
 
     if (existingEmail.length === 1) {
       return res.status(400).json({
