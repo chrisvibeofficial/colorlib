@@ -2,6 +2,7 @@ const { verify } = require('../helper/html');
 const { send_email } = require('../middlewares/nodemailer');
 const userModel = require('../models/user');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 
 exports.register = async (req, res) => {
@@ -30,10 +31,13 @@ exports.register = async (req, res) => {
       })
     };
 
+    const saltedRound = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, saltedRound);
+
     const newUser = new userModel({
       userName,
       email,
-      password
+      password: hashedPassword
     });
 
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '5mins' });
@@ -90,13 +94,13 @@ exports.verify = async (req, res) => {
 
           const newToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5mins' });
           const link = `${req.protocol}://${req.get('host')}/api/v1/verify/user/${newToken}`;
-
+          
           const mailFormat = {
             email: user.email,
             html: verify(link, user.userName),
             subject: 'RESEND: ACCOUNT VERIFICATION'
           };
-      
+
           await send_email(mailFormat);
           res.status(201).json({
             message: 'Session expired, Link has been sent to email address',
@@ -135,4 +139,37 @@ exports.verify = async (req, res) => {
       message: 'Error Verifying User'
     })
   }
-}
+};
+
+
+exports.login = async (req, res) => {
+  try {
+    const { userName, password } = req.body;
+    const user = await userModel.findOne({ userName: userName });
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'Account not found'
+      })
+    };
+
+    const checkPassword = await bcrypt.compare(password, user.password);
+
+    if (!checkPassword) {
+      return res.status(400).json({
+        message: 'Incorrect Password'
+      })
+    };
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '5mins' });
+    res.status(200).json({
+      message: 'User logged in successfully',
+      token
+    })
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: 'Error Logging User In'
+    })
+  }
+};
