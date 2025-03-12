@@ -183,4 +183,4 @@ exports.reset = (link, userName) => {
         
 
   `
-}
+};

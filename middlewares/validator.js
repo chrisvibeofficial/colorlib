@@ -36,3 +36,38 @@ exports.validateLogin = (req, res, next) => {
 
   next()
 };
+
+
+exports.validateForgotPassword = (req, res, next) => {
+  const schema = joi.object({
+    email: joi.string().trim().email().required(),
+  });
+
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message
+    })
+  };
+
+  next()
+};
+
+
+exports.validateResetPassword = (req, res, next) => {
+  const schema = joi.object({
+    newPassword: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required(),
+    confirmPassword: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required()
+  });
+
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message
+    })
+  };
+
+  next()
+};
