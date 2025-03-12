@@ -22,7 +22,7 @@ exports.send_email = (recipient) => {
       html: recipient.html, // html body
     });
 
-    console.log("Message sent: ", recipient.email);
+    console.log("Message sent to: ", recipient.email);
     // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
   }
 
