@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 
+// ONBORDING SECTION
+
 exports.register = async (req, res) => {
   try {
     const { userName, email, password, confirmPassword } = req.body
@@ -256,6 +258,8 @@ exports.resetPassword = async (req, res) => {
 };
 
 
+// CRUD OPERATION SECTION
+
 exports.getUsers = async (req, res) => {
   try {
     const users = await userModel.find();
@@ -298,6 +302,50 @@ exports.getUser = async (req, res) => {
     console.log(error.message);
     res.status(500).json({
       message: 'Error Getting User'
+    })
+  }
+};
+
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { password, newPassword, confirmPassword } = req.body;
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'Account not found'
+      })
+    };
+
+    const checkPassword = await bcrypt.compare(password, user.password);
+
+    if (!checkPassword) {
+      return res.status(400).json({
+        message: 'Incorrect Password'
+      })
+    };
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: 'Password does not match'
+      })
+    };
+
+    const saltedRound = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, saltedRound);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      message: 'Password changed successfully'
+    })
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({
+      message: 'Error Updating User'
     })
   }
 };
