@@ -90,3 +90,21 @@ exports.validateChangePassword = (req, res, next) => {
 
   next()
 };
+
+
+exports.validateProduct = (req, res, next) => {
+  const schema = joi.object({
+    description: joi.string().trim().min(10).max(50).required(),
+    productPrice: joi.number().trim().required()
+  });
+
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message
+    })
+  };
+
+  next()
+};
