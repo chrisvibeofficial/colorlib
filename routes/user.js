@@ -6,7 +6,7 @@ const router = require('express').Router();
 
 router.post('/register', validateRegister, register);
 router.get('/verify/user/:token', verify);
-router.post('/login', login);
+router.post('/login', validateLogin, login);
 router.get('/users', getUsers);
 router.get('/user', authenticate, getUser);
 router.post('/forgot/password', validateForgotPassword, forgotPassword);
