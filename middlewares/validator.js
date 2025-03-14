@@ -71,3 +71,20 @@ exports.validateResetPassword = (req, res, next) => {
 
   next()
 };
+
+exports.validateProduct = (req, res, next) => {
+  const schema = joi.object({
+    description: joi.string().trim().required(),
+    productPrice: joi.number().required()
+  });
+
+  const { error } = schema.validate(req.body, { abortEarly: false });
+
+  if (error) {
+    return res.status(400).json({
+      message: error.message
+    })
+  };
+
+  next()
+};
