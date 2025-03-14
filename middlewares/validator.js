@@ -8,7 +8,7 @@ exports.validateRegister = (req, res, next) => {
     confirmPassword: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required()
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, { abortEarly: true });
 
   if (error) {
     return res.status(400).json({
@@ -26,7 +26,7 @@ exports.validateLogin = (req, res, next) => {
     password: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required(),
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, { abortEarly: true });
 
   if (error) {
     return res.status(400).json({
@@ -43,7 +43,7 @@ exports.validateForgotPassword = (req, res, next) => {
     email: joi.string().trim().email().required(),
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, { abortEarly: true });
 
   if (error) {
     return res.status(400).json({
@@ -61,7 +61,7 @@ exports.validateResetPassword = (req, res, next) => {
     confirmPassword: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required()
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, { abortEarly: true });
 
   if (error) {
     return res.status(400).json({
@@ -80,7 +80,7 @@ exports.validateChangePassword = (req, res, next) => {
     confirmPassword: joi.string().pattern(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/).required()
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, { abortEarly: true });
 
   if (error) {
     return res.status(400).json({
@@ -94,11 +94,11 @@ exports.validateChangePassword = (req, res, next) => {
 
 exports.validateProduct = (req, res, next) => {
   const schema = joi.object({
-    description: joi.string().trim().min(10).max(50).required(),
-    productPrice: joi.number().trim().required()
+    description: joi.string().trim().min(1).pattern(/^[A-Za-z]+$/).required(),
+    productPrice: joi.number().required()
   });
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, { abortEarly: true });
 
   if (error) {
     return res.status(400).json({

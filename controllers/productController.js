@@ -1,5 +1,5 @@
 const productModel = require("../models/product");
-const cloudinary = require("cloudinary")
+const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 
 exports.createProduct = async (req, res) => {
@@ -9,16 +9,16 @@ exports.createProduct = async (req, res) => {
 
     let image = {};
 
-    if (file) {
+    if (file && file.path) {
       const result = await cloudinary.uploader.upload(file.path);
       fs.unlinkSync(file.path);
-
+      
       image = {
         imageUrl: result.secure_url,
         imagePublicId: result.public_id,
       };
     }
-
+    
     const product = new productModel({
       description,
       productPrice,
@@ -26,11 +26,12 @@ exports.createProduct = async (req, res) => {
     });
 
     await product.save();
-
+    // fs.unlinkSync(file.path);
+    
     res.status(201).json({ message: "Product Created Successfully", data: product });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    // console.error(error.message);
+    res.status(500).json({ message: "Internal Server Error: ", error: error.message });
   }
 };
 
@@ -59,12 +60,12 @@ exports.getOneProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const product = await productModel.find().populate('description', 'productPrice', 'image')
+    const products = await productModel.find();
 
-    res.status(200).json({ message: 'all products in the database', data: product })
+    res.status(200).json({ message: 'all products in the database', data: products })
 
   } catch (error) {
-    console.log(error.message)
+    console.log(error)
     res.status(500).json({ message: 'internal server error' })
   }
 };
