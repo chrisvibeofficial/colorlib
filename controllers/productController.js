@@ -4,7 +4,7 @@ const fs = require("fs");
 
 exports.createProduct = async (req, res) => {
   try {
-    const { description, productPrice } = req.body;
+    const { productName, description, productPrice } = req.body;
     const file = req.file; // Handling a single image
 
     let image = {};
@@ -12,14 +12,15 @@ exports.createProduct = async (req, res) => {
     if (file && file.path) {
       const result = await cloudinary.uploader.upload(file.path);
       fs.unlinkSync(file.path);
-      
+
       image = {
         imageUrl: result.secure_url,
         imagePublicId: result.public_id,
       };
     }
-    
+
     const product = new productModel({
+      productName,
       description,
       productPrice,
       image,
@@ -27,7 +28,7 @@ exports.createProduct = async (req, res) => {
 
     await product.save();
     // fs.unlinkSync(file.path);
-    
+
     res.status(201).json({ message: "Product Created Successfully", data: product });
   } catch (error) {
     // console.error(error.message);
@@ -39,16 +40,16 @@ exports.createProduct = async (req, res) => {
 
 exports.getOneProduct = async (req, res) => {
   try {
-    const { id } = req.params
+    const { productId } = req.params
 
 
-    const userProduct = await productModel.findById(id)
+    const product = await productModel.findById(productId)
 
-    if (!userProduct) {
+    if (!product) {
       return res.status(404).json({ message: 'product not found' })
     }
 
-    res.status(200).json({ message: `kindly find the product below`, data: userProduct })
+    res.status(200).json({ message: `kindly find the product below`, data: product })
 
   } catch (error) {
     console.log(error.message)
@@ -74,20 +75,21 @@ exports.getAllProducts = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const { id: userId } = req.params;
-    const { description, productPrice } = req.body;
-    const product = await productModel.findById(userId)
+    const { productId } = req.params;
+    const { productName, description, productPrice } = req.body;
+    const product = await productModel.findById(productId)
     // check if the user is found and return an error if not found
-    if (product === null) {
+    if (!product) {
       return res.status(404).json({ message: 'Product Not Found' })
     };
     const data = {
+      productName,
       description,
       productPrice
     }
 
-    if (req.files && req.file[0]) {
-      for (const image of product.images) {
+    if (req.file && req.file.path) {
+      for (const image of product.image) {
         await cloudinary.uploader.upload.destroy(image.imagePublicId)
       }
       const picturesURL = []
@@ -101,7 +103,7 @@ exports.updateProduct = async (req, res) => {
         }
         picturesURL.push(photo)
       }
-      data.image = picturesURl;
+      data.image = picturesURL;
     }
     const updateProduct = await postModel.findByIdAndUpdate(productId, data, { new: true });
 
@@ -117,8 +119,8 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const { id } = req.params;
-    const product = await productModel.findById(id);
+    const { productId } = req.params;
+    const product = await productModel.findById(productId);
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -128,7 +130,7 @@ exports.deleteProduct = async (req, res) => {
       await cloudinary.uploader.destroy(product.image.imagePublicId);
     }
 
-    await productModel.findByIdAndDelete(id);
+    await productModel.findByIdAndDelete(product);
 
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
