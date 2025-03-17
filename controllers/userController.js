@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
       })
     };
 
-    const existingusername = await userModel.find({ userName: userName });
+    const existingusername = await userModel.find({ userName: userName.toLowerCase() });
 
     if (existingusername.length === 1) {
       return res.status(400).json({

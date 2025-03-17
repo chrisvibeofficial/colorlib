@@ -7,9 +7,9 @@ const router = require('express').Router();
 
 
 router.post("/create/product", uploads.single("image"), createProduct);
-router.get("/product/:id", getOneProduct);
+router.get("/product/:productId", getOneProduct);
 router.get("/products", getAllProducts);
-router.put("/update/:id", uploads.single("image"), updateProduct);
-router.delete("/delete/:id", deleteProduct);
+router.put("/update/:productId", uploads.single("image"), updateProduct);
+router.delete("/delete/:productId", deleteProduct);
 
 module.exports = router;

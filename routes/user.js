@@ -4,6 +4,7 @@ const { validateRegister, validateLogin, validateForgotPassword, validateResetPa
 
 const router = require('express').Router();
 
+
 router.post('/register', validateRegister, register);
 router.get('/verify/user/:token', verify);
 router.post('/login', validateLogin, login);
