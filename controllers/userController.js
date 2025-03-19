@@ -43,7 +43,7 @@ exports.register = async (req, res) => {
     });
 
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '5mins' });
-    const link = `${req.protocol}://${req.get('host')}/api/v1/verify/user/${token}`;
+    const link = `https://e-store-group-project.vercel.app/verifyEmail/${token}`;
 
     const mailFormat = {
       email: newUser.email,
