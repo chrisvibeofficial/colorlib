@@ -95,7 +95,7 @@ exports.validateChangePassword = (req, res, next) => {
 exports.validateProduct = (req, res, next) => {
   const schema = joi.object({
     description: joi.string().trim().min(10).max(50).required(),
-    productPrice: joi.number().trim().required()
+    productPrice: joi.number().required()
   });
 
   const { error } = schema.validate(req.body, { abortEarly: false });
